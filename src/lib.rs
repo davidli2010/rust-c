@@ -134,5 +134,5 @@ pub extern "C" fn print_str(ptr: *const c_char) {
 }
 
 extern "C" {
-    pub fn print_from_c(x: *const c_char);
+    fn print_from_c(x: *const c_char);
 }

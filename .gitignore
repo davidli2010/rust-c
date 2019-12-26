@@ -3,3 +3,4 @@
 **/*.rs.bk
 Cargo.lock
 c_src/main
+c_src/rust-c.h

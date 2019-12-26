@@ -8,4 +8,5 @@ edition = "2018"
 name = "rustc"
 crate-type = ["staticlib", "cdylib"]
 
-[dependencies]
+[build-dependencies]
+cbindgen = "^0.12.0"

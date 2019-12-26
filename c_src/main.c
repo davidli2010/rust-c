@@ -23,8 +23,8 @@ int main() {
     uint32_t sum = sum_of_even(numbers, 6);
     printf("%d\n", sum);
 
-    tuple_t initial = {10, 20};
-    tuple_t new = flip_things_around(initial);
+    Tuple initial = {10, 20};
+    Tuple new = flip_things_around(initial);
     printf("(%d,%d)\n", new.x, new.y);
 
     Database *database = database_new();
