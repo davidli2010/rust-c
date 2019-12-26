@@ -1,4 +1,4 @@
-Rust-C interoperation
+# Rust-C Interoperation
 
 ```Bash
 make run
