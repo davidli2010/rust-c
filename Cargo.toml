@@ -1,0 +1,11 @@
+[package]
+name = "rust-c"
+version = "0.1.0"
+authors = ["David Li <davidli2010@foxmail.com>"]
+edition = "2018"
+
+[lib]
+name = "rustc"
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
