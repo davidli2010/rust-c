@@ -3,9 +3,10 @@
 //
 
 #include "rust-c.h"
+#include "c-api.h"
 #include <stdio.h>
 
-int print_from_c(const char* str) {
+void print_from_c(const char* str) {
     printf("C: %s\n", str);
 }
 

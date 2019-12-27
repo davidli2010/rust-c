@@ -4,3 +4,4 @@
 Cargo.lock
 c_src/main
 c_src/rust-c.h
+src/bindings.rs

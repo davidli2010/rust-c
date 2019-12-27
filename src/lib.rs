@@ -1,3 +1,5 @@
+mod bindings;
+
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_uint};
@@ -129,10 +131,6 @@ pub extern "C" fn database_free(ptr: *mut Database) {
 #[no_mangle]
 pub extern "C" fn print_str(ptr: *const c_char) {
     unsafe {
-        print_from_c(ptr);
+        bindings::print_from_c(ptr);
     }
-}
-
-extern "C" {
-    fn print_from_c(x: *const c_char);
 }
