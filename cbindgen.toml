@@ -1,0 +1,5 @@
+language = "C"
+include_guard = "RUST_C_H"
+
+[export]
+exclude = ["print_from_c"]
