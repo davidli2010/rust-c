@@ -2,6 +2,8 @@ use cbindgen;
 use std::path::PathBuf;
 
 fn main() {
+    println!("cargo:rerun-if-changed=cbindgen.toml");
+
     let crate_dir =
         std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR env var is not defined");
     let config = cbindgen::Config::from_file("cbindgen.toml")
