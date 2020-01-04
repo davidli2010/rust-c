@@ -5,13 +5,14 @@
 #![feature(update_panic_count)]
 
 mod bindings;
+mod error;
 mod exception;
 
+use crate::error::JumpError;
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_uint};
 use std::panic;
-use std::sync::Once;
 
 #[no_mangle]
 pub extern "C" fn print_hello_from_rust() {
@@ -139,20 +140,34 @@ pub extern "C" fn database_free(ptr: *mut Database) {
 
 #[no_mangle]
 pub extern "C" fn print_str(ptr: *const c_char) {
-    exception::catch_exception(|| unsafe {
+    unsafe {
         bindings::print_from_c(ptr);
-    })
+    }
+}
+
+#[derive(Debug)]
+struct Data {
+    data: Vec<i8>,
+}
+
+impl Drop for Data {
+    fn drop(&mut self) {
+        println!("drop Data");
+    }
+}
+
+fn rust_routine() -> std::result::Result<(), JumpError> {
+    let data = Data {
+        data: vec![1, 2, 3],
+    };
+    exception::catch_exception(|| unsafe {
+        bindings::longjmp_routine();
+    })?;
+    println!("data: {:?}", data);
+    Ok(())
 }
 
 #[no_mangle]
 pub extern "C" fn worker_routine() {
-    init();
-    exception::catch_exception(|| unsafe {
-        bindings::longjmp_routine();
-    })
-}
-
-fn init() {
-    static INIT: Once = Once::new();
-    INIT.call_once(|| panic::set_hook(exception::exception_handler()));
+    exception::resume_exception(|| rust_routine())
 }
