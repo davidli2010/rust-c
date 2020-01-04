@@ -31,10 +31,17 @@ impl Exception {
     }
 }
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 macro_rules! sigsetjmp {
     ($stack: expr, $val: expr) => {
         unsafe { crate::bindings::__sigsetjmp($stack as *mut _, $val) }
+    };
+}
+
+#[cfg(target_os = "macos")]
+macro_rules! sigsetjmp {
+    ($stack: expr, $val: expr) => {
+        unsafe { crate::bindings::sigsetjmp($stack as *mut _, $val) }
     };
 }
 

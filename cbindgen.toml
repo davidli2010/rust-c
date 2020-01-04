@@ -3,4 +3,4 @@ include_guard = "RUST_C_H"
 cpp_compat = true
 
 [export]
-exclude = ["print_from_c", "__sigsetjmp", "siglongjmp"]
+exclude = ["print_from_c", "__sigsetjmp", "siglongjmp", "sigsetjmp"]

@@ -14,6 +14,7 @@ fn main() {
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .whitelist_function("print_from_c")
         .whitelist_function("__sigsetjmp")
+        .whitelist_function("sigsetjmp")
         .whitelist_function("siglongjmp")
         .whitelist_function("longjmp_routine")
         .whitelist_var("g_exception_stack")
