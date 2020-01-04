@@ -1,8 +1,16 @@
+#![allow(non_camel_case_types)]
+#![allow(non_upper_case_globals)]
+#![allow(non_snake_case)]
+#![allow(dead_code)]
+
 mod bindings;
+mod exception;
 
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_uint};
+use std::panic;
+use std::sync::Once;
 
 #[no_mangle]
 pub extern "C" fn print_hello_from_rust() {
@@ -130,7 +138,20 @@ pub extern "C" fn database_free(ptr: *mut Database) {
 
 #[no_mangle]
 pub extern "C" fn print_str(ptr: *const c_char) {
-    unsafe {
+    exception::catch_exception(|| unsafe {
         bindings::print_from_c(ptr);
-    }
+    })
+}
+
+#[no_mangle]
+pub extern "C" fn worker_routine() {
+    init();
+    exception::catch_exception(|| unsafe {
+        bindings::longjmp_routine();
+    })
+}
+
+fn init() {
+    static INIT: Once = Once::new();
+    INIT.call_once(|| panic::set_hook(exception::exception_handler()));
 }

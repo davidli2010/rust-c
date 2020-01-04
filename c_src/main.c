@@ -5,9 +5,75 @@
 #include "rust-c.h"
 #include "c-api.h"
 #include <stdio.h>
+#include <assert.h>
+#include <unistd.h>
 
-void print_from_c(const char* str) {
+sigjmp_buf *g_exception_stack = NULL;
+
+#define TRY()  \
+    do { \
+        sigjmp_buf *save_exception_stack = g_exception_stack; \
+        sigjmp_buf local_sigjmp_buf; \
+        if (sigsetjmp(local_sigjmp_buf, 0) == 0) \
+        { \
+            g_exception_stack = &local_sigjmp_buf
+
+#define CATCH()    \
+        } \
+        else \
+        { \
+            g_exception_stack = save_exception_stack;
+
+#define END_TRY()  \
+        } \
+        g_exception_stack = save_exception_stack; \
+} while (0)
+
+void rethrow() {
+    if (g_exception_stack != NULL) {
+        printf("throw by jump\n");
+        siglongjmp(*g_exception_stack, 1);
+    } else {
+        printf("rethrow with no exception stack\n");
+        //assert(0);
+    }
+}
+
+void print_from_c(const char *str) {
     printf("C: %s\n", str);
+}
+
+void longjmp_routine() {
+    printf("long jump in C\n");
+    rethrow();
+}
+
+void worker() {
+    TRY();
+    {
+        worker_routine();
+    }
+    CATCH();
+    {
+        printf("exception happened in worker!\n");
+    }
+    END_TRY();
+}
+
+void WorkerMain() {
+    sigjmp_buf local_sigjmp_buf;
+
+    if (sigsetjmp(local_sigjmp_buf, 1) != 0) {
+        printf("exception happened\n");
+        return;
+    }
+
+    g_exception_stack = &local_sigjmp_buf;
+
+    for (;;) {
+        worker();
+        usleep(1000000);
+    }
 }
 
 int main() {
@@ -36,4 +102,6 @@ int main() {
     printf("%d\n", pop2 - pop1);
 
     print_str("call rust");
+
+    WorkerMain();
 }
