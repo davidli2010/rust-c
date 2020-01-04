@@ -88,6 +88,7 @@ pub fn exception_handler() -> Box<dyn Fn(&PanicInfo<'_>) + 'static + Sync + Send
         //   the fence is to make sure the longjmp is not reodered.
         compiler_fence(Ordering::SeqCst);
         if let Some(context) = info.payload().downcast_ref::<JumpContext>() {
+            std::rt::update_panic_count(-1);
             // WARNING: do not set this level above Notice (ERROR, FATAL, PANIC), as it will calse
             //   the following longjmp to execute.
             println!("continuing longjmp: {}", info);
@@ -96,6 +97,7 @@ pub fn exception_handler() -> Box<dyn Fn(&PanicInfo<'_>) + 'static + Sync + Send
         } else {
             // error level will cause a longjmp in Rust
             println!("panic in Rust: {}", info);
+            siglongjump(Exception::current_exception_stack(), 1);
         }
 
         unreachable!("all above statements should have cause a longjmp to C");
