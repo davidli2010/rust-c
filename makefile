@@ -9,4 +9,4 @@ clean:
 	rm -f ./src/bindings.rs
 build:
 	$(CARGO_BIN) build
-	$(GCC_BIN) -g -o ./c_src/main ./c_src/main.c -Ic_src -L ./target/debug -lrustc
+	$(GCC_BIN) -g -o ./c_src/main ./c_src/main.c -Ic_src -L ./target/debug -lrustc -lpthread -ldl
